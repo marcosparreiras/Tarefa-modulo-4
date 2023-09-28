@@ -1,0 +1,181 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Open+Sans:wght@400;700&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #ddd;
+}
+
+header {
+    display: flex;
+    justify-content: flex-end;
+    margin: 5px 50px;
+    gap: 10px;
+}
+
+header button {
+    background-color: #999;
+}
+
+.animated-bg {
+    background: linear-gradient(-45deg, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradient 5s ease infinite;
+}
+
+h1 {
+    margin: 50px auto;
+    text-align: center;
+    max-width: 900px;
+    border-radius: 15px;
+    padding: 30px;
+    color: #fff;
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradient 5s ease infinite;
+}
+
+form {
+    background-color: #23a6d5;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 15px;
+    border-radius: 15px 15px 0 0;
+    max-width: 800px;
+    margin-bottom: 15px;
+}
+
+form input {
+    margin-right: 30px;
+    flex-grow: 1;
+    font-size: 22px;
+    color: #fff;
+    line-height: 30px;
+    background-color: #ddd;
+    border: none;
+    background-color: transparent;
+    border-bottom: 1px solid #fff;
+    transition: 1s;
+}
+
+form input:focus {
+    font-size: 26px;
+    outline: none;
+}
+
+form input::placeholder {
+    color: #fff;
+}
+
+button {
+    color: #fff;
+    font-size: 16px;
+    padding: 5px 20px;
+    cursor: pointer;
+    background-color: transparent;
+    border: 2px solid #fff;
+    border-radius: 15px;
+    transition: 200ms;
+}
+
+.btn:hover {
+    background: #23d5ab;
+    transform: scale(1.05);
+}
+
+.btn:active {
+    transform: scale(1);
+}
+
+ul {
+    margin: auto;
+    background-color: #23a6d5;
+    border-radius: 0 0 15px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 800px;
+    min-height: 30px;
+    padding: 30px 15px;
+}
+
+li {
+    position: relative;
+    color: #fff;
+    font-size: 18px;
+    display: flex;
+    width: 95%;
+    justify-content: space-between;
+    padding: 15px;
+    background-color: transparent;
+    border-bottom: 1px solid #fff;
+}
+
+li span {
+    user-select: none;
+}
+
+li:hover {
+    transform: scale(1.02);
+}
+
+li:last-child {
+    border: none;
+}
+
+.done::before {
+    position: absolute;
+    background-color: #e73c7e;
+    font-size: 16px;
+    text-align: start;
+    padding: 3px;
+    width: 50px;
+    height: 20px;
+    content: 'Feito!';
+    top: 14px;
+    left: -50px;
+    clip-path: polygon(0% 0%, 75% 0%, 100% 50%, 75% 100%, 0% 100%);
+}
+
+.delete-btn,
+#close-edit {
+    background-color: #e73c7e;
+    border-radius: 15px 0 0 15px;
+}
+
+.delete-btn:hover,
+.edit-btn:hover,
+#commit-edit:hover,
+#close-edit:hover {
+    padding: 5px 25px;
+}
+
+.edit-btn,
+#commit-edit {
+    background-color: #23d5ab;
+    border-radius: 0 15px 15px 0;
+    border-left: none;
+}
+
+#edit-form {
+    border-radius: 0;
+    display: none;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}

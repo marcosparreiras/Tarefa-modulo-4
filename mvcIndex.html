@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Exemplo de SPA sem framework no MVC pattern</title>
+        <link rel="stylesheet" href="styles.css" />
+        <script src="app.js" defer></script>
+    </head>
+    <body>
+        <header>
+            <button id="order-btn" class="btn">oredem</button>
+            <button id="show-done-btn" done="true" class="animated-bg">
+                Exibir concluidos
+            </button>
+        </header>
+        <main id="app">
+            <h1 class="animated-bg">
+                Exemplo de SPA sem framework no MVC pattern
+            </h1>
+            <form id="todo-form">
+                <input
+                    type="text"
+                    id="todo-input"
+                    placeholder="Digite uma tarefa"
+                />
+                <button type="submit" class="btn">Adicionar</button>
+            </form>
+            <form id="edit-form" class="animated-bg">
+                <input
+                    type="text"
+                    id="edit-input"
+                    placeholder="Edite a tarefa"
+                />
+                <button type="submit" id="close-edit">Cancelar</button>
+                <button type="submit" id="commit-edit">Editar</button>
+            </form>
+            <ul id="todo-list"></ul>
+        </main>
+    </body>
+</html>

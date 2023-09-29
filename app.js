@@ -139,7 +139,9 @@ const controller = {
                 }
                 return 0;
             });
-            console.log(todos);
+            if (!view.setShowDoneBtnHasDone()) {
+                todos = todos.filter((todoObj) => !todoObj.done);
+            }
             view.renderTodos(todos);
         });
 

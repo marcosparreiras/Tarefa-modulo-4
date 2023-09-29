@@ -28,7 +28,6 @@ const model = {
         console.log(this.todos);
     },
     getTodos: function () {
-        console.log(this.todos);
         return this.todos;
     },
 };
@@ -131,7 +130,16 @@ const controller = {
         view.orderBtn.addEventListener('click', (event) => {
             event.preventDefault();
             view.clearTodoList();
-            todos.reverse();
+            todos = model.getTodos().sort((a, b) => {
+                if (a.text < b.text) {
+                    return -1;
+                }
+                if (a.text > b.text) {
+                    return 1;
+                }
+                return 0;
+            });
+            console.log(todos);
             view.renderTodos(todos);
         });
 
@@ -139,12 +147,11 @@ const controller = {
         view.showDoneBtn.addEventListener('click', (event) => {
             event.preventDefault();
             view.clearTodoList();
+            todos = model.getTodos();
             if (view.setShowDoneBtnHasDone()) {
-                todos = model.getTodos();
                 todos = todos.filter((todoObj) => !todoObj.done);
                 view.setShowDoneBtnAttribute('done', '');
             } else {
-                todos = model.getTodos();
                 view.setShowDoneBtnAttribute('done', 'true');
             }
             view.renderTodos(todos);

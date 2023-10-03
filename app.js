@@ -4,7 +4,7 @@ const model = {
         { id: 23, text: 'tarefa 01', done: false },
         { id: 25, text: 'tarefa 02', done: true },
         { id: 113, text: 'tarefa 03', done: false },
-    ], //local storage, db
+    ],
     addTodo: function (todoObj) {
         this.todos.push(todoObj);
     },
@@ -24,9 +24,6 @@ const model = {
     findTodoById(todoId) {
         return this.todos.find((todoObj) => todoObj.id == todoId);
     },
-    logTodos: function () {
-        console.log(this.todos);
-    },
     getTodos: function () {
         return this.todos;
     },
@@ -42,22 +39,18 @@ const view = {
     editTodoInput: document.getElementById('edit-input'),
     todoList: document.getElementById('todo-list'),
     renderTodos: function (todosArray) {
+        this.clearTodoList();
+        if (!this.ShowDoneBtnHasDone()) {
+            todosArray = todosArray.filter((todoObj) => !todoObj.done);
+        }
         todosArray.forEach((todoObj) => {
             this.createTodo(todoObj.text, todoObj.done, todoObj.id);
         });
     },
-    createElement: function (element, innerText, className, id) {
-        const HTMLElement = document.createElement(element);
-        if (innerText) {
-            HTMLElement.innerText = innerText;
-        }
-        if (className) {
-            HTMLElement.classList.add(className);
-        }
-        if (id) {
-            HTMLElement.id = id;
-        }
-        return HTMLElement;
+    clearTodoList() {
+        Array.from(this.todoList.children).forEach((todoLi) => {
+            todoLi.remove();
+        });
     },
     createTodo: function (todoText, done, todoId) {
         const todoItem = this.createElement(
@@ -80,8 +73,18 @@ const view = {
         this.todoInput.value = '';
         return todoItem;
     },
-    removeTodo: function (todoLi) {
-        todoLi.remove();
+    createElement: function (element, innerText, className, id) {
+        const HTMLElement = document.createElement(element);
+        if (innerText) {
+            HTMLElement.innerText = innerText;
+        }
+        if (className) {
+            HTMLElement.classList.add(className);
+        }
+        if (id) {
+            HTMLElement.id = id;
+        }
+        return HTMLElement;
     },
     showEdit: function (todoLi) {
         this.editTodoForm.style.display = 'flex';
@@ -91,21 +94,7 @@ const view = {
         this.editTodoForm.style.display = 'none';
         this.editTodoInput.value = '';
     },
-    checkOrUncheckTodo: function (todoLi) {
-        todoLi.classList.toggle('done');
-    },
-    editTodo: function (todoLi) {
-        const spanElement = todoLi.querySelector('span');
-        spanElement.innerText = this.editTodoInput.value;
-        this.closeEdit();
-        return spanElement.innerText;
-    },
-    clearTodoList() {
-        Array.from(this.todoList.children).forEach((todoLi) => {
-            todoLi.remove();
-        });
-    },
-    setShowDoneBtnHasDone: function () {
+    ShowDoneBtnHasDone: function () {
         return this.showDoneBtn.getAttribute('done') ? true : false;
     },
     setShowDoneBtnAttribute: function (attribute, value) {
@@ -126,10 +115,10 @@ const controller = {
         let todoCreateId = todos.sort((a, b) => b.id - a.id)[0]?.id || 0;
         view.renderTodos(todos);
 
-        // Ordenar todos
+        // Btn ordenação ABC...
         view.orderBtn.addEventListener('click', (event) => {
             event.preventDefault();
-            view.clearTodoList();
+            // Ordenar to-dos
             todos = model.getTodos().sort((a, b) => {
                 if (a.text < b.text) {
                     return -1;
@@ -139,89 +128,79 @@ const controller = {
                 }
                 return 0;
             });
-            if (!view.setShowDoneBtnHasDone()) {
-                todos = todos.filter((todoObj) => !todoObj.done);
-            }
             view.renderTodos(todos);
         });
 
-        // (Mostrar / Ocultar) todos concluidos
+        // Btn mostrar concluidos
         view.showDoneBtn.addEventListener('click', (event) => {
             event.preventDefault();
-            view.clearTodoList();
+            // (Mostrar / Ocultar) to-dos concluidos
             todos = model.getTodos();
-            if (view.setShowDoneBtnHasDone()) {
-                todos = todos.filter((todoObj) => !todoObj.done);
-                view.setShowDoneBtnAttribute('done', '');
-            } else {
-                view.setShowDoneBtnAttribute('done', 'true');
-            }
+            view.ShowDoneBtnHasDone()
+                ? view.setShowDoneBtnAttribute('done', '')
+                : view.setShowDoneBtnAttribute('done', 'true');
             view.renderTodos(todos);
         });
 
-        // Painel de criação
-        view.todoForm.addEventListener('submit', function (event) {
+        // Formulário de criação
+        view.todoForm.addEventListener('submit', (event) => {
             event.preventDefault();
-            const todoText = view.todoInput.value;
-
-            // Adicionar todo
-            if (todoText.trim() !== '') {
+            const newTodoText = view.todoInput.value;
+            // Adicionar to-do
+            if (newTodoText.trim() !== '') {
                 todoCreateId++;
-                const todoCard = view.createTodo(todoText, false, todoCreateId);
-                model.addTodo({ id: todoCard.id, text: todoText, done: false });
-            }
-        });
-
-        // Painel de Edição
-        view.editTodoForm.addEventListener('click', (e) => {
-            e.preventDefault();
-            const todoCard = document.getElementById(this.todoInEditionId);
-            if (e.target.matches('button')) {
-                const buttonTarget = e.target;
-
-                // Fechar edição
-                if (buttonTarget.id === 'close-edit') {
-                    view.closeEdit();
-                    this.todoInEditionId = null;
-                }
-
-                // Concluir edição
-                if (buttonTarget.id === 'commit-edit') {
-                    const newText = view.editTodo(todoCard);
-                    model.editTodo(this.todoInEditionId, newText);
-                    this.todoInEditionId = null;
-                }
-            }
-        });
-
-        // Todo container
-        view.todoList.addEventListener('click', (e) => {
-            e.preventDefault();
-            // (Marca / Desmarca) todo como concluido
-            if (e.target.matches('li')) {
-                const todoCard = e.target;
-                view.checkOrUncheckTodo(todoCard);
-                model.checkOrUncheckTodo(todoCard.id);
-                view.clearTodoList();
+                model.addTodo({
+                    id: todoCreateId,
+                    text: newTodoText,
+                    done: false,
+                });
                 todos = model.getTodos();
-                if (!view.setShowDoneBtnHasDone()) {
-                    todos = todos.filter((todoObj) => !todoObj.done);
-                }
                 view.renderTodos(todos);
             }
+        });
 
-            if (e.target.matches('button')) {
-                const targetButton = e.target;
+        // Formulário de Edição
+        view.editTodoForm.addEventListener('click', (event) => {
+            event.preventDefault();
+            if (event.target.matches('button')) {
+                // Concluir edição
+                if (event.target.id === 'commit-edit') {
+                    model.editTodo(
+                        this.todoInEditionId,
+                        view.editTodoInput.value
+                    );
+                    todos = model.getTodos();
+                    view.renderTodos(todos);
+                }
+                // Fechar formulário de edição
+                this.todoInEditionId = null;
+                view.closeEdit();
+            }
+        });
+
+        // To-Dos container
+        view.todoList.addEventListener('click', (event) => {
+            event.preventDefault();
+            // (Marcar / Desmarcar) to-do como concluido
+            if (event.target.matches('li')) {
+                model.checkOrUncheckTodo(event.target.id);
+                todos = model.getTodos();
+                view.renderTodos(todos);
+            }
+            if (event.target.matches('button')) {
+                const targetButton = event.target;
                 const todoCard = targetButton.parentElement.parentElement;
                 const buttonClassListArray = Array.from(targetButton.classList);
-
-                // Deletar todo
+                // Deletar to-do
                 if (buttonClassListArray.includes('delete-btn')) {
-                    view.removeTodo(todoCard);
                     model.removeTodo(todoCard.id);
+                    if (todoCard.id === this.todoInEditionId) {
+                        view.closeEdit();
+                    }
+                    todos = model.getTodos();
+                    view.renderTodos(todos);
                 }
-
-                // Abrir painel de edição
+                // Abrir formulário de edição
                 if (buttonClassListArray.includes('edit-btn')) {
                     view.showEdit(todoCard);
                     this.todoInEditionId = todoCard.id;
